@@ -1,0 +1,19 @@
+{
+    "name": "ictorch/icsap",
+    "description": "library to consume sap webservices",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "ictorch\\icsap\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ignacio Cuadra",
+            "email": "ignacio.cuadra.z@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    }
+}
