@@ -1,6 +1,6 @@
 # [icsap](https://github.com/ictorch/icsap) ![php version](https://img.shields.io/badge/php-%3E%3D7.4-blue) ![license](https://img.shields.io/github/license/ictorch/icsap)
 
-library to consume sap webservices
+library to consume sap service layer
 
 ## Usage
 
