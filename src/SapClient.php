@@ -16,27 +16,33 @@ class SapClient {
   private $username;
   private $password;
   private $database;
+  private $language;
 
   private $sessionId = null;
   private $sessionTimeout;
   private $loggedInAt;
   private $sessionExpireAt;
 
-  public function __construct($host, $port, $database, $username, $password)
+  public function __construct($host, $port, $database, $username, $password, $language = null)
   {
     $this->host = $host;
     $this->port = $port;
     $this->username = $username;
     $this->password = $password;
     $this->database = $database;
+    $this->language = $language;
   }
 
   private function login() {
-    $response = $this->curl('Login', HTTP_POST, [
+    $loginBody = [
       'UserName' => $this->username,
       'Password' => $this->password,
       'CompanyDB' => $this->database
-    ]);
+    ];
+    if (!is_null($this->language)) {
+      $loginBody["Language"] = $this->language;
+    }
+    $response = $this->curl('Login', HTTP_POST, $loginBody);
     $this->sessionId = $response['SessionId'];
     $this->sessionTimeout = $response['SessionTimeout'];
     $this->loggedInAt = time();
