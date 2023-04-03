@@ -10,6 +10,7 @@ define('HTTP_DELETE', 'PUT');
  */
 class SapClient {
 
+  private $ssl;
   private $host;
   private $port;
 
@@ -23,8 +24,9 @@ class SapClient {
   private $loggedInAt;
   private $sessionExpireAt;
 
-  public function __construct($host, $port, $database, $username, $password, $language = null)
+  public function __construct($ssl, $host, $port, $database, $username, $password, $language = null)
   {
+    $this->ssl = $ssl;
     $this->host = $host;
     $this->port = $port;
     $this->username = $username;
@@ -54,7 +56,8 @@ class SapClient {
     $port = $this->port;
     $sessionId = $this->sessionId;
     $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, "https://$host:$port/b1s/v1/$action");
+    $ssl = $this->ssl? 'https' : 'http';
+    curl_setopt($curl, CURLOPT_URL, "$ssl://$host:$port/b1s/v1/$action");
     $customHeader = [];
     if (count($header) > 0) {
       foreach ($header as $key => $value) {
@@ -62,8 +65,10 @@ class SapClient {
       }
     }
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    if($this->ssl) {
+      curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    }
     //curl_setopt($curl, CURLOPT_VERBOSE, true);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15); 
     curl_setopt($curl, CURLOPT_TIMEOUT, 400);
