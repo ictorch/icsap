@@ -20,7 +20,7 @@ class SapClientFactory {
     if (is_null($database)) $database = getenv("ICSAP_DATABASE");
     if (is_null($username)) $username = getenv("ICSAP_USERNAME");
     if (is_null($password)) $password = getenv("ICSAP_PASSWORD");
-    if (is_null($language) && getenv("ICSAP_PASSWORD")) $language = getenv("ICSAP_LANGUAGE");
+    if (is_null($language) && getenv("ICSAP_LANGUAGE")) $language = getenv("ICSAP_LANGUAGE");
     return new SapClient($ssl, $host, $port, $database, $username, $password, $language);
   }  
 }
