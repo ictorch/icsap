@@ -8,7 +8,8 @@ define('HTTP_DELETE', 'PUT');
  * @since 20-11-2022
  * @author Ignacio Cuadra
  */
-class SapClient {
+class SapClient
+{
 
   private $ssl;
   private $host;
@@ -24,18 +25,19 @@ class SapClient {
   private $loggedInAt;
   private $sessionExpireAt;
 
-  public function __construct($ssl, $host, $port, $database, $username, $password, $language = null)
+  public function __construct($host, $port, $database, $username, $password, $ssl = true, $language = null)
   {
-    $this->ssl = $ssl;
     $this->host = $host;
     $this->port = $port;
     $this->username = $username;
     $this->password = $password;
     $this->database = $database;
+    $this->ssl = $ssl;
     $this->language = $language;
   }
 
-  private function login() {
+  private function login()
+  {
     $loginBody = [
       'UserName' => $this->username,
       'Password' => $this->password,
@@ -51,12 +53,13 @@ class SapClient {
     $this->sessionExpireAt = $this->loggedInAt + ($this->sessionTimeout * 60);
   }
 
-  private function curl($action, $method, $params = [], $header = []) {
+  private function curl($action, $method, $params = [], $header = [])
+  {
     $host = $this->host;
     $port = $this->port;
     $sessionId = $this->sessionId;
     $curl = curl_init();
-    $ssl = $this->ssl? 'https' : 'http';
+    $ssl = $this->ssl ? 'https' : 'http';
     curl_setopt($curl, CURLOPT_URL, "$ssl://$host:$port/b1s/v1/$action");
     $customHeader = [];
     if (count($header) > 0) {
@@ -65,12 +68,12 @@ class SapClient {
       }
     }
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    if($this->ssl) {
+    if ($this->ssl) {
       curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
       curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
     }
     //curl_setopt($curl, CURLOPT_VERBOSE, true);
-    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15); 
+    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 15);
     curl_setopt($curl, CURLOPT_TIMEOUT, 400);
     switch ($method) { // by default is GET
       case HTTP_GET:
@@ -108,11 +111,13 @@ class SapClient {
     return $response;
   }
 
-  private function isSessionExpired($aditionalTime = 1) {
+  private function isSessionExpired($aditionalTime = 1)
+  {
     return (time() + $aditionalTime) > $this->sessionExpireAt;
   }
 
-  public function fetch($action, $method, $params = [],  $header = []) {
+  public function fetch($action, $method, $params = [], $header = [])
+  {
     if (!is_null($this->sessionId) && $this->isSessionExpired()) {
       $this->sessionId = null;
     }
@@ -120,6 +125,26 @@ class SapClient {
       $this->login();
     }
     return $this->curl($action, $method, $params, $header);
+  }
+
+  public function get($action, $params = [], $header = [])
+  {
+    return $this->fetch($action, HTTP_GET, $params, $header);
+  }
+
+  public function post($action, $params = [], $header = [])
+  {
+    return $this->fetch($action, HTTP_POST, $params, $header);
+  }
+
+  public function patch($action, $params = [], $header = [])
+  {
+    return $this->fetch($action, HTTP_PATCH, $params, $header);
+  }
+
+  public function delete($action, $params = [], $header = [])
+  {
+    return $this->fetch($action, HTTP_DELETE, $params, $header);
   }
 
 }
