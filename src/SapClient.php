@@ -97,7 +97,13 @@ class SapClient
     }
     curl_setopt($curl, CURLOPT_HTTPHEADER, $customHeader);
     $result = curl_exec($curl);
-    if ($method == HTTP_PATCH && ($result == "" || $result == null)) {
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if ($result === false) {
+      $curlError = curl_error($curl);
+      curl_close($curl);
+      throw new SapException("Error at processing response", $params, $curlError);
+    }
+    if (($method == HTTP_PATCH || $method == HTTP_DELETE) && ($result == "" || $result == null) && $httpCode >= 200 && $httpCode < 300) {
       $result = "[]";
     }
     $response = json_decode($result, true);
