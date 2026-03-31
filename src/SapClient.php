@@ -3,7 +3,7 @@ namespace ictorch\icsap;
 define('HTTP_GET', 'GET');
 define('HTTP_POST', 'POST');
 define('HTTP_PATCH', 'PATCH');
-define('HTTP_DELETE', 'PUT');
+define('HTTP_DELETE', 'DELETE');
 /**
  * @since 20-11-2022
  * @author Ignacio Cuadra
